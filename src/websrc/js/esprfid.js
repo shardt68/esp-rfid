@@ -208,6 +208,9 @@ function listhardware() {
   document.getElementById("doorbellpin").value = config.hardware.doorbellpin;
   document.getElementById("openlockpin").value = config.hardware.openlockpin;
   document.getElementById("accessdeniedpin").value = config.hardware.accessdeniedpin;
+  document.getElementById("lockEnabled").checked = config.hardware.lockEnabled;
+  document.getElementById("lockCount").value = config.hardware.lockCount;
+  document.getElementById("lockTime").value = config.hardware.lockTime;
   document.getElementById("useridstoragemode").value = config.hardware.useridstoragemode;
   document.getElementById("requirepincodeafterrfid").checked = config.hardware.requirepincodeafterrfid;
   document.getElementById("allowpincodeonly").checked = config.hardware.allowpincodeonly;
@@ -287,6 +290,9 @@ function savehardware() {
   config.hardware.doorbellpin = parseInt(document.getElementById("doorbellpin").value);
   config.hardware.openlockpin = parseInt(document.getElementById("openlockpin").value);
   config.hardware.accessdeniedpin = parseInt(document.getElementById("accessdeniedpin").value);
+  config.hardware.lockEnabled = document.getElementById("lockEnabled").checked;
+  config.hardware.lockCount = parseInt(document.getElementById("lockCount").value);
+  config.hardware.lockTime = parseInt(document.getElementById("lockTime").value);
   config.hardware.beeperpin = parseInt(document.getElementById("beeperpin").value);
   config.hardware.ledwaitingpin = parseInt(document.getElementById("ledwaitingpin").value);
   config.hardware.doorname = document.getElementById("doorname").value;
@@ -1549,6 +1555,9 @@ function socketMessageListener(evt) {
         config = obj;
         if (!('wifipin' in config.hardware)) config.hardware.wifipin = 255;
         if (!('doorstatpin' in config.hardware)) config.hardware.doorstatpin = 255;
+        if (!('lockEnabled' in config.hardware)) config.hardware.lockEnabled = false;
+        if (!('lockCount' in config.hardware)) config.hardware.lockCount = 3;
+        if (!('lockTime' in config.hardware)) config.hardware.lockTime = 60;
         if (!('maxOpenDoorTime' in config.hardware)) config.hardware.maxOpenDoorTime = 0;
         if (!('doorbellpin' in config.hardware)) config.hardware.doorbellpin = 255;
         if (!('accessdeniedpin' in config.hardware)) config.hardware.accessdeniedpin = 255;

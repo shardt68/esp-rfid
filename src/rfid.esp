@@ -29,8 +29,37 @@ enum RfidProcessingStates
 	cancelled
 };
 
+int failedAttempts = 0;
+unsigned long lockoutStartTime = 0;
+
 RfidStates rfidState = waitingRfid;
 RfidProcessingStates processingState = waitingProcessing;
+
+void handleLockout() {
+	if (config.lockEnabled && lockoutStartTime > 0) {
+		unsigned long elapsed = millis() - lockoutStartTime;
+		if (elapsed < (unsigned long)(config.lockTime * 1000)) {
+			// Blink error LED: ON for first 100ms of every second
+			if (config.accessdeniedpin != 255) {
+				if ((elapsed % 1000) < 100) {
+					digitalWrite(config.accessdeniedpin, HIGH);
+				} else {
+					digitalWrite(config.accessdeniedpin, LOW);
+				}
+			}
+		} else {
+			// Lockout expired
+			lockoutStartTime = 0;
+			failedAttempts = 0;
+			if (config.accessdeniedpin != 255) {
+				digitalWrite(config.accessdeniedpin, LOW);
+			}
+		#ifdef DEBUG
+			Serial.println(F("[ INFO ] Lockout expired"));
+		#endif
+		}
+	}
+}
 
 void loadWiegandData()
 {
@@ -490,6 +519,7 @@ void rfidOutsideMessaging()
 			mqttPublishAccess(epoch, "true", accountTypes, username, uid, pinCode);
 		}
 		beeperValidAccess();
+		failedAttempts = 0;
 	}
 	if (processingState == validAdmin)
 	{
@@ -501,6 +531,7 @@ void rfidOutsideMessaging()
 			mqttPublishAccess(epoch, "true", accountTypes, username, uid, pinCode);
 		}
 		beeperAdminAccess();
+		failedAttempts = 0;
 	}
 	if (processingState == expired)
 	{
@@ -511,6 +542,15 @@ void rfidOutsideMessaging()
 		mqttPublishAccess(epoch, "true", "Expired", username, uid, pinCode);
 		ledAccessDeniedOn();
 		beeperAccessDenied();
+		if (config.lockEnabled) {
+			failedAttempts++;
+			if (failedAttempts >= config.lockCount) {
+				lockoutStartTime = millis();
+				#ifdef DEBUG
+				Serial.println(F("[ WARN ] Lockout activated due to excessive failures"));
+				#endif
+			}
+		}
 	}
 	if (processingState == wrongPincode)
 	{
@@ -518,6 +558,15 @@ void rfidOutsideMessaging()
 		mqttPublishAccess(epoch, "true", "Wrong pin code", username, uid, pinCode);
 		ledAccessDeniedOn();
 		beeperAccessDenied();
+		if (config.lockEnabled) {
+			failedAttempts++;
+			if (failedAttempts >= config.lockCount) {
+				lockoutStartTime = millis();
+				#ifdef DEBUG
+				Serial.println(F("[ WARN ] Lockout activated due to excessive failures"));
+				#endif
+			}
+		}
 	}
 	if (processingState == notValid)
 	{
@@ -528,6 +577,15 @@ void rfidOutsideMessaging()
 		mqttPublishAccess(epoch, "true", "Disabled", username, uid, pinCode);
 		ledAccessDeniedOn();
 		beeperAccessDenied();
+		if (config.lockEnabled) {
+			failedAttempts++;
+			if (failedAttempts >= config.lockCount) {
+				lockoutStartTime = millis();
+				#ifdef DEBUG
+				Serial.println(F("[ WARN ] Lockout activated due to excessive failures"));
+				#endif
+			}
+		}
 	}
 	if (processingState == unknown)
 	{
@@ -549,6 +607,15 @@ void rfidOutsideMessaging()
 		mqttPublishAccess(epoch, "false", "Denied", "Unknown", uid, " ");
 		ledAccessDeniedOn();
 		beeperAccessDenied();
+		if (config.lockEnabled) {
+			failedAttempts++;
+			if (failedAttempts >= config.lockCount) {
+				lockoutStartTime = millis();
+				#ifdef DEBUG
+				Serial.println(F("[ WARN ] Lockout activated due to excessive failures"));
+				#endif
+			}
+		}
 	} else if (uid != "" && processingState != waitingProcessing)
 	{
 		// message to the web UI to tell who has opened the door
@@ -595,6 +662,11 @@ void cleanRfidLoop()
 
 void rfidLoop()
 {
+	handleLockout();
+	if (lockoutStartTime > 0) {
+		rfidPrepareRead();
+		return;
+	}
 	rfidPrepareRead();
 	rfidRead();
 	pinCodeRead();

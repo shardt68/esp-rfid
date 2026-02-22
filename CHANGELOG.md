@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.1.0] - 2026-02-22
+
+### Added
+- [firmware] Added configurable lockout after multiple failed attempts (PIN/Card) with visual feedback via Access Denied LED.
+- [webui] Added configuration settings for lockout (enable/disable, max failed attempts, lockout duration) in Hardware Settings.
+
 ## [2.0.0] - 2024-11-02
 
 ### Bugfixes

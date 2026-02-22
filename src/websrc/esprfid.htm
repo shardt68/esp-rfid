@@ -359,6 +359,24 @@
         </span>
     </div>
     <div class="row form-group">
+        <label class="col-xs-3">Enable Lockout<i style="margin-left: 10px;" class="glyphicon glyphicon-info-sign" aria-hidden="true" data-toggle="popover" data-trigger="hover" data-placement="right" data-content="Enable lockout after failed attempts"></i></label>
+        <div class="col-xs-9 col-md-5">
+            <input type="checkbox" id="lockEnabled" name="lockEnabled">
+        </div>
+    </div>
+    <div class="row form-group">
+        <label class="col-xs-3">Max Failed Attempts<i style="margin-left: 10px;" class="glyphicon glyphicon-info-sign" aria-hidden="true" data-toggle="popover" data-trigger="hover" data-placement="right" data-content="Number of failed attempts before lockout"></i></label>
+        <span class="col-xs-9 col-md-5">
+            <input class="form-control input-sm" placeholder="e.g. 3" id="lockCount" type="number" min="1" max="100">
+        </span>
+    </div>
+    <div class="row form-group">
+        <label class="col-xs-3">Lockout Duration (s)<i style="margin-left: 10px;" class="glyphicon glyphicon-info-sign" aria-hidden="true" data-toggle="popover" data-trigger="hover" data-placement="right" data-content="Lockout duration in seconds"></i></label>
+        <span class="col-xs-9 col-md-5">
+            <input class="form-control input-sm" placeholder="e.g. 60" id="lockTime" type="number">
+        </span>
+    </div>
+    <div class="row form-group">
         <label class="col-xs-3">Beeper<i style="margin-left: 10px;" class="glyphicon glyphicon-info-sign" aria-hidden="true" data-toggle="popover" data-trigger="hover" data-placement="right" data-content="Choose &quot;Beeper&quot; pin"></i></label>
         <span class="col-xs-9 col-md-5">
               <select class="form-control input-sm" id="beeperpin">

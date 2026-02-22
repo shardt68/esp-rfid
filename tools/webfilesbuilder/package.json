@@ -9,11 +9,13 @@
   "license": "UNLICENSED",
   "dependencies": {
     "fs-extra": "^11.3.0",
-    "gulp": "^5.0.0",
     "gulp-concat": "^2.6.1",
     "gulp-flatmap": "^1.0.2",
     "gulp-htmlmin": "^5.0.1",
     "gulp-uglify": "^3.0.2"
   },
-  "bin": "bin.js"
+  "bin": "bin.js",
+  "devDependencies": {
+    "gulp": "^5.0.1"
+  }
 }

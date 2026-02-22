@@ -41,6 +41,10 @@ struct Config {
     uint8_t openlockpin = 255;
     bool pinCodeRequested = false;
     bool pinCodeOnly = false;
+    // Lockout configuration
+    bool lockEnabled = false;
+    int lockCount = 3;
+    unsigned long lockTime = 60; // in seconds
     bool wiegandReadHex = true;
     bool present = false;
     int readertype;

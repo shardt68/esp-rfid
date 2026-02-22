@@ -55,6 +55,19 @@ bool ICACHE_FLASH_ATTR loadConfiguration(Config &config)
 		config.maxOpenDoorTime = hardware["maxOpenDoorTime"];
 	}
 
+	if (hardware.containsKey("lockEnabled"))
+	{
+		config.lockEnabled = hardware["lockEnabled"];
+	}
+	if (hardware.containsKey("lockCount"))
+	{
+		config.lockCount = hardware["lockCount"];
+	}
+	if (hardware.containsKey("lockTime"))
+	{
+		config.lockTime = hardware["lockTime"];
+	}
+
 	if (hardware.containsKey("doorbellpin"))
 	{
 		config.doorbellpin = hardware["doorbellpin"];
